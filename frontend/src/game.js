@@ -10,9 +10,8 @@ function GAME(type){
     this.init=function(){
         if(arguments[0]) {
             this.ws=arguments[0];
-            this.nameBox.innerHTML=arguments[0].userName;
+            this.setNameBox(arguments[0].userName)
         }
-        var that=this;
         this.clearStage();
         this.score=0;
         this.map=[[0,0,0,0],[0,0,0,0],[0,0,0,0],[0,0,0,0]]; //2048地图阵列
@@ -21,13 +20,16 @@ function GAME(type){
         this.score=0;           //分数初始化
         this.isKeyDown=0;       //记录键盘是否按下
         this.isMove=0;          //记录是否有移动
+        this.moveNum=0;         //记录同时移动的操作数量，当有滑块仍在移动时禁止操作
         this.beginPos=[];       //方块记录队列，用于记录未渲染但已生成的方块
-        if(this.control=="self") {   //若为己方
-            that.rand();
-            that.rand();
-            that.rand();
+        if(this.control=="self"){
+            this.rand();
+            this.rand();
+            this.rand();
             window.onkeydown = function (event) {
                 if (that.isKeyDown) return;
+                if(that.moveNum>=1) return;
+                that.moveNum++;
                 var e = event || window.event;
                 if (e) {
                     that.isKeyDown = 1;
@@ -38,12 +40,13 @@ function GAME(type){
                 that.isKeyDown = 0;
             };
         }
+        var that=this;
         setInterval(function(){
             that.scoreBox.innerHTML=that.score;
         },10)
     };
 
-    //渲染方块，前提是beginPos队列中有排队成员
+    //渲染beginPos队列中的成员方块
     this.createBlock=function(){
         while(this.beginPos.length){
             var blk=new Block(),
@@ -286,7 +289,6 @@ function GAME(type){
                 }
                 //console.log(numOfBlock)
                 if (numOfBlock == 16 && !that.isMove) {
-                    alert("你输了!");
                     info={
                         code:-2,
                         user:that.ws.userName,
@@ -298,7 +300,8 @@ function GAME(type){
                 }
                 else {
                     that.isMove=0;
-                    if(that.control=="self") {//若为己方，才将行动码发至对方
+                    if(that.control=="self") {  //若为己方，才将行动码发至对方
+                        that.moveNum--;
                         that.rand();
                         info = {
                             code: 2,
@@ -312,7 +315,7 @@ function GAME(type){
                     }
                     that.createBlock();
                 }
-            }, 300)
+            }, 250)
         }
     };
     this.clearStage=function(){

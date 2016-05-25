@@ -4,9 +4,10 @@ var extractTextPlugin=require("extract-text-webpack-plugin");
 module.exports={
     plugins:[new extractTextPlugin("[name].css")],
     entry:{
-        run:'./connector.js'
+        run:'./drive/connector.js'
     },
     output:{
+        path:'drive/',
         filename:'[name].js'
     },
     module:{
@@ -20,8 +21,9 @@ module.exports={
     resolve:{
         root:'D:/website/2048/frontend',
         alias:{
-            game:'game.js',
-            block:'block.js'
+            game:'src/game.js',
+            block:'src/block.js',
+            tools:'src/tools.js'
         }
     }
 }

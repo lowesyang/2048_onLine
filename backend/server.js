@@ -11,33 +11,52 @@ ws.on('connection',function(conn){
         var user=msgJson.user;
         var roomId=msgJson.roomId;
         var token=msgJson.token;
-        var info,comp;
+        var info,comp,compete;
         if(!conn.user){
             if(typeof rooms[msgJson.roomId]=='undefined'){
                 rooms[roomId]=new Array();
             }
+            rooms[roomId].isGame=0;
             conn.user=user;
-            conn.beginPos=msgJson.beginPos;
             conn.roomId=roomId;
             conn.token=token;
             rooms[roomId].push(conn);
         }
-        if(rooms[roomId].length==2) {
-            if (msgJson.code == 0) {
-                var self = findSelf(rooms[roomId], token);
-                var compete = findCompetitor(rooms[roomId], token);
-                var selfInfo = {
-                    code: 1,
-                    comp:compete.user,
-                    beginPos: compete.beginPos
-                };
-                var competeInfo = {
-                    code: 1,
-                    comp:self.user,
-                    beginPos: self.beginPos
-                };
-                self.send(JSON.stringify(selfInfo));
-                compete.send(JSON.stringify(competeInfo));
+        if(rooms[roomId].length==2) {       //两个玩家均已进入房间
+            if(msgJson.code==100){
+                compete=findCompetitor(rooms[roomId],token);
+                var selfInfo=JSON.stringify({
+                    code:100,
+                    comp:compete.user
+                });
+                var compInfo=JSON.stringify({
+                    code:100,
+                    comp:conn.user
+                })
+                conn.send(selfInfo);
+                compete.send(compInfo);
+            }
+            if(msgJson.code==0){    //准备
+                rooms[roomId].isGame++;
+                compete = findCompetitor(rooms[roomId], token);
+                conn.beginPos=msgJson.beginPos;
+                if(rooms[roomId].isGame==2){
+                    var selfInfo = {
+                        code: 1,
+                        comp:compete.user,
+                        beginPos: compete.beginPos
+                    };
+                    var competeInfo = {
+                        code: 1,
+                        comp:conn.user,
+                        beginPos: conn.beginPos
+                    };
+                    conn.send(JSON.stringify(selfInfo));
+                    compete.send(JSON.stringify(competeInfo));
+                }
+                else{
+                    compete.send(JSON.stringify({code:0}));
+                }
             }
             if (msgJson.code == 2) {
                 info = {
@@ -48,12 +67,17 @@ ws.on('connection',function(conn){
                 comp = findCompetitor(rooms[roomId], token);
                 comp.send(JSON.stringify(info));
             }
-            if (msgJson.code == -2) {
-                info = {
+            if (msgJson.code == -2) {   //游戏回合结束
+                rooms[roomId].isGame=0;
+                var winInfo = { //胜利
                     code: 3
                 };
                 comp = findCompetitor(rooms[roomId], token);
-                comp.send(JSON.stringify(info));
+                comp.send(JSON.stringify(winInfo));
+                var failInfo={  //失败
+                    code:-3
+                };
+                conn.send(JSON.stringify(failInfo));
             }
         }
     });
@@ -70,13 +94,6 @@ ws.on('connection',function(conn){
         }
     })
 });
-
-function findSelf(rooms,token){
-    for(var i=0;i<rooms.length;i++){
-        if(rooms[i].token==token) break;
-    }
-    return rooms[i];
-}
 
 function findCompetitor(rooms,token){
     for(var i=0;i<rooms.length;i++){
