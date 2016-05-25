@@ -1,0 +1,51 @@
+*{
+    padding:0px;
+    margin:0px;
+    font-family: "Microsoft YaHei","Microsoft YaHei UI Light",sans-serif;
+
+}
+.container{
+    margin: 20px auto;
+    width:1000px;
+    height:auto;
+}
+.container>.box:first-child{
+    float:left;
+}
+.container>.box:last-child{
+    float:right;
+}
+.container>.box>h2{
+    text-align: center;
+}
+.container>.box>.stage{
+    margin:10px auto;
+    width:420px;
+    height:420px;
+    padding:8px;
+    border:2px solid #aaaaaa;
+}
+.block{
+    position: absolute;
+    width:100px;
+    height:100px;
+    line-height:100px;
+    text-align: center;
+    font-size: 40px;
+    -webkit-transition: margin-left 0.3s, margin-top 0.3s;
+    -moz-transition: margin-left 0.3s, margin-top 0.3s;
+    -ms-transition: margin-left 0.3s, margin-top 0.3s;
+    -o-transition: margin-left 0.3s, margin-top 0.3s;
+    transition: margin-left 0.3s, margin-top 0.3s;
+}
+.container>.box>.scoreBox{
+    width:400px;
+    padding:5px;
+    height:50px;
+    margin:30px auto;
+    font-size: 26px;
+    letter-spacing:1px;
+}
+.container>.box>.scoreBox>span{
+    margin-left: 10px;
+}
