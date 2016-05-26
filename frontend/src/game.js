@@ -1,4 +1,5 @@
 var Block=require("block");
+var tools=require("tools");
 
 function GAME(type){
     this.stage=document.getElementById(type+"Stage");
@@ -30,12 +31,10 @@ function GAME(type){
                 if (that.isKeyDown) return;
                 if(that.moveNum>=1) return;
                 var e = event || window.event;
-                if (e) {
-                    if(e.keyCode>=37 && e.keyCode<=40) {
-                        that.isKeyDown = 1;
-                        that.slide(e.keyCode);
-                        that.moveNum++;
-                    }
+                if (e && e.keyCode>=37 && e.keyCode<=40) {
+                    that.isKeyDown = 1;
+                    that.slide(e.keyCode);
+                    that.moveNum++;
                 }
             };
             window.onkeyup = function () {
@@ -291,11 +290,13 @@ function GAME(type){
             }
             //console.log(numOfBlock)
             if (numOfBlock == 16 && !that.isMove) {
+                tools.asyncAlert("游戏结束,您的分数为["+that.score+"].");
                 info={
                     code:-2,
                     user:that.ws.userName,
                     roomId:that.ws.roomId,
-                    token:that.ws.token
+                    token:that.ws.token,
+                    score:that.score
                 };
                 that.ws.send(JSON.stringify(info));
                 that.init();

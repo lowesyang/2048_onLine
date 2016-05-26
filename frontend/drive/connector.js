@@ -89,9 +89,10 @@
             //com.beginPos=com.beginPos.concat(res.beginPos);  //一定要用数组连接，否则会因异步传输导致动作信息丢失
             com.slide(res.actionCode);
         }
-        if(res.code==3 || res.code==-3){//胜利或失败信息
+        if(res.code==3 || res.code==-3 || res.code==66){//胜利或失败信息
             if(res.code==3) tools.asyncAlert("你赢了!");
-            else tools.asyncAlert("你输了!");
+            else if(res.code==-3) tools.asyncAlert("你输了!");
+            else tools.asyncAlert("平局！");
             pageStateInit();
             com.init();
             self.init();

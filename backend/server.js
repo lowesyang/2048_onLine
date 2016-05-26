@@ -79,16 +79,32 @@ ws.on('connection',function(conn){
                 comp.send(JSON.stringify(info));
             }
             if (msgJson.code == -2) {   //游戏回合结束
-                rooms[roomId].isGame=0;
-                var winInfo = { //胜利
-                    code: 3
-                };
-                comp = findCompetitor(rooms[roomId], token);
-                comp.send(JSON.stringify(winInfo));
-                var failInfo={  //失败
-                    code:-3
-                };
-                conn.send(JSON.stringify(failInfo));
+                rooms[roomId].isGame--;
+                conn.score=msgJson.score;
+                if(!rooms[roomId].isGame){
+                    var winInfo = { //胜利
+                        code: 3
+                    };
+                    comp = findCompetitor(rooms[roomId], token);
+                    var failInfo={  //失败
+                        code:-3
+                    };
+                    var peace={     //平局
+                        code:66
+                    };
+                    if(comp.score>conn.score) {
+                        comp.send(JSON.stringify(winInfo));
+                        conn.send(JSON.stringify(failInfo));
+                    }
+                    else if(comp.score<conn.score){
+                        comp.send(JSON.stringify(failInfo));
+                        conn.send(JSON.stringify(winInfo));
+                    }
+                    else{
+                        comp.send(JSON.stringify(peace));
+                        conn.send(JSON.stringify(peace));
+                    }
+                }
             }
         }
     });
