@@ -1,5 +1,4 @@
 var Block=require("block");
-var tools=require("tools");
 
 function GAME(type){
     this.stage=document.getElementById(type+"Stage");
@@ -293,7 +292,7 @@ function GAME(type){
             }
             //console.log(numOfBlock)
             if (numOfBlock == 16 && !that.isMove) {
-                tools.asyncAlert("游戏结束,您的分数为["+that.score+"].");
+                alert("游戏结束,您的分数为["+that.score+"].");
                 info={
                     code:-2,
                     user:that.ws.userName,

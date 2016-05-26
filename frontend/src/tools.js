@@ -15,13 +15,6 @@ function getUserInfo(){
     }
 }
 
-function asyncAlert(text){
-    setTimeout(function(){
-        alert(text);
-    },0);
-}
-
 module.exports={
-    getUserInfo:getUserInfo,
-    asyncAlert:asyncAlert
+    getUserInfo:getUserInfo
 }

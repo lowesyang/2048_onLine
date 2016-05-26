@@ -59,7 +59,7 @@
             comState.style.color="coral";
         }
         if(res.code==-1){
-            tools.asyncAlert("对方已离开房间,您可以继续玩！");
+            alert("对方已离开房间,您可以继续玩！");
             com.init();
             com.setNameBox("虚位以待");
             pageStateInit();
@@ -82,9 +82,9 @@
             com.comHandle(actionQueue); //指令队列处理
         }
         if(res.code==3 || res.code==-3 || res.code==66){//胜利或失败信息
-            if(res.code==3) tools.asyncAlert("你赢了!");
-            else if(res.code==-3) tools.asyncAlert("你输了!");
-            else tools.asyncAlert("平局!");
+            if(res.code==3) alert("你赢了!");
+            else if(res.code==-3) alert("你输了!");
+            else alert("平局!");
             pageStateInit();
             com.init();
             self.init();
