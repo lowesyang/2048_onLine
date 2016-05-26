@@ -29,11 +29,13 @@ function GAME(type){
             window.onkeydown = function (event) {
                 if (that.isKeyDown) return;
                 if(that.moveNum>=1) return;
-                that.moveNum++;
                 var e = event || window.event;
                 if (e) {
-                    that.isKeyDown = 1;
-                    that.slide(e.keyCode);
+                    if(e.keyCode>=37 && e.keyCode<=40) {
+                        that.isKeyDown = 1;
+                        that.slide(e.keyCode);
+                        that.moveNum++;
+                    }
                 }
             };
             window.onkeyup = function () {
@@ -273,50 +275,49 @@ function GAME(type){
                 }
             }
         }
-        if(keycode<=40 && keycode>=37) {
-            var that=this,info;
-            setTimeout(function () {
-                var numOfBlock = 0;
-                for (i = 0; i < 4; i++) {
-                    for (j = 0; j < 4; j++) {
-                        if (that.map[i][j] != 0){
-                            numOfBlock++;
-                            if(that.map[i][j].block.innerHTML>that.maxNum){
-                                that.maxNum=that.map[i][j].block.innerHTML
-                            }
+
+        var that=this,info;
+        setTimeout(function () {
+            var numOfBlock = 0;
+            for (i = 0; i < 4; i++) {
+                for (j = 0; j < 4; j++) {
+                    if (that.map[i][j] != 0){
+                        numOfBlock++;
+                        if(that.map[i][j].block.innerHTML>that.maxNum){
+                            that.maxNum=that.map[i][j].block.innerHTML
                         }
                     }
                 }
-                //console.log(numOfBlock)
-                if (numOfBlock == 16 && !that.isMove) {
-                    info={
-                        code:-2,
+            }
+            //console.log(numOfBlock)
+            if (numOfBlock == 16 && !that.isMove) {
+                info={
+                    code:-2,
+                    user:that.ws.userName,
+                    roomId:that.ws.roomId,
+                    token:that.ws.token
+                };
+                that.ws.send(JSON.stringify(info));
+                that.init();
+            }
+            else {
+                that.isMove=0;
+                if(that.control=="self") {  //若为己方，才将行动码发至对方
+                    that.moveNum--;
+                    that.rand();
+                    info = {
+                        code: 2,
                         user:that.ws.userName,
                         roomId:that.ws.roomId,
-                        token:that.ws.token
+                        token:that.ws.token,
+                        actionCode: keycode,
+                        beginPos:that.beginPos
                     };
                     that.ws.send(JSON.stringify(info));
-                    that.init();
                 }
-                else {
-                    that.isMove=0;
-                    if(that.control=="self") {  //若为己方，才将行动码发至对方
-                        that.moveNum--;
-                        that.rand();
-                        info = {
-                            code: 2,
-                            user:that.ws.userName,
-                            roomId:that.ws.roomId,
-                            token:that.ws.token,
-                            actionCode: keycode,
-                            beginPos:that.beginPos
-                        };
-                        that.ws.send(JSON.stringify(info));
-                    }
-                    that.createBlock();
-                }
-            }, 250)
-        }
+                that.createBlock();
+            }
+        }, 250)
     };
     this.clearStage=function(){
         while(this.stage.hasChildNodes()){
