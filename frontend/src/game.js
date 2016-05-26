@@ -49,6 +49,7 @@ function GAME(type){
 
     //渲染beginPos队列中的成员方块
     this.createBlock=function(){
+        var num=typeof arguments[0]=='undefined'?null:arguments[0];
         while(this.beginPos.length){
             var blk=new Block(),
                 pos=this.beginPos.shift(),
@@ -57,6 +58,10 @@ function GAME(type){
             blk.create(x,y,this.stage);
             blk.setNumber(pos.num);
             this.map[y][x]=blk;
+            if(num){
+                num--;
+                if(!num) break;
+            }
         }
     };
 
@@ -316,7 +321,7 @@ function GAME(type){
                     };
                     that.ws.send(JSON.stringify(info));
                 }
-                that.createBlock();
+                that.createBlock(1);
             }
         }, 250)
     };
