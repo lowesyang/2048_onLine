@@ -3,7 +3,7 @@ var ws=new websocket({port:9501});
 var rooms=[];   // 4个房间
 
 ws.on('connection',function(conn){
-    conn.user=false;
+    conn.token=false;
 
     conn.on('message',function(message){
         var msgJson=JSON.parse(message);
@@ -12,7 +12,7 @@ ws.on('connection',function(conn){
         var roomId=msgJson.roomId;
         var token=msgJson.token;
         var info,comp,compete;
-        if(!conn.user){
+        if(!conn.token){
             if(typeof rooms[msgJson.roomId]=='undefined'){
                 rooms[roomId]=new Array();
             }
@@ -22,8 +22,19 @@ ws.on('connection',function(conn){
             conn.token=token;
             rooms[roomId].push(conn);
         }
+
+        if(rooms[roomId].length==3){    //出现三名玩家同时在房内
+            conn.token=false;
+            rooms[roomId].pop();
+            info={
+                code:-50
+            };
+            return conn.send(JSON.stringify(info));
+        }
+
         if(rooms[roomId].length==2) {       //两个玩家均已进入房间
             if(msgJson.code==100){
+                conn.roomId=roomId;
                 compete=findCompetitor(rooms[roomId],token);
                 var selfInfo=JSON.stringify({
                     code:100,

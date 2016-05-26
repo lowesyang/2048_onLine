@@ -28,8 +28,7 @@
             roomId:userInfo.roomId,
             token:userInfo.token
         };
-        var msg=JSON.stringify(info);
-        ws.send(msg);
+        ws.send(JSON.stringify(info));
     };
 
     ws.onmessage=function(e){
@@ -39,6 +38,21 @@
             com.setNameBox(res.comp);
             readyBtn.isClick=0;
         }
+        if(res.code==-50){  //房间已满
+            userInfo.roomId=prompt("房间已满，请重新输入房间号:");
+            while(typeof userInfo.roomId=='undefined' || userInfo.roomId==""){
+                userInfo.roomId=prompt("房间已满，请重新输入房间号:");
+            }
+            ws.roomId=userInfo.roomId;
+            var info={
+                code:100,
+                user:userInfo.userName,
+                roomId:userInfo.roomId,
+                token:userInfo.token
+            };
+            ws.send(JSON.stringify(info));
+        }
+
         if(res.code==0){    //准备
             comState.innerHTML="已准备";
             comState.style.color="coral";
@@ -46,6 +60,7 @@
         if(res.code==-1){
             tools.asyncAlert("对方已离开房间,您可以继续玩！");
             com.init();
+            com.setNameBox("虚位以待");
             pageStateInit();
         }
         if(res.code==1){
@@ -106,8 +121,7 @@
             token:userInfo.token,
             beginPos:self.beginPos
         };
-        var msg=JSON.stringify(info);
-        ws.send(msg);
+        ws.send(JSON.stringify(info));
     }
 
     function pageStateInit(){
