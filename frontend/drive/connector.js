@@ -5,6 +5,7 @@
     var com=new GAME("com");
     var readyBtn=document.getElementById("readyBtn");
     var comState=document.getElementsByClassName("state")[0];
+    var actionQueue=[];
 
     readyBtn.isClick=1;
     readyBtn.addEventListener("click",getReady);
@@ -74,25 +75,16 @@
             com.createBlock();
         }
         if(res.code==2){
-            //console.log(res.actionCode);
-            for(var i=0;i<res.beginPos.length;i++){
-                var pos=res.beginPos[i],flag=0;
-                for(var j=0;j<com.beginPos.length;j++){
-                    var tmp=com.beginPos[j];
-                    if(pos.x==tmp.x && pos.y==tmp.y && pos.num==tmp.num){
-                        flag=1;
-                        break;
-                    }
-                }
-                if(!flag) com.beginPos.push(pos);
-            }
-            //com.beginPos=com.beginPos.concat(res.beginPos);  //一定要用数组连接，否则会因异步传输导致动作信息丢失
-            com.slide(res.actionCode);
+            actionQueue.push({
+                actionCode:res.actionCode,
+                nwPos:res.nwPos
+            });
+            com.comHandle(actionQueue); //指令队列处理
         }
         if(res.code==3 || res.code==-3 || res.code==66){//胜利或失败信息
             if(res.code==3) tools.asyncAlert("你赢了!");
             else if(res.code==-3) tools.asyncAlert("你输了!");
-            else tools.asyncAlert("平局！");
+            else tools.asyncAlert("平局!");
             pageStateInit();
             com.init();
             self.init();

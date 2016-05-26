@@ -17,9 +17,9 @@ function Block(){
         this.position(x,y);
         stage.appendChild(nwBlock);
     };
-    this.setNumber=function(color){
-        this.number=color;
-        this.block.innerHTML=color;
+    this.setNumber=function(num){
+        this.number=num;
+        this.block.innerHTML=num;
         switch(parseInt(this.number)){
             case 2:this.block.style.backgroundColor="#3399cc";
                 this.block.style.color="white";

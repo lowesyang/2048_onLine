@@ -274,8 +274,11 @@ function GAME(type){
                 }
             }
         }
+        if(this.control=="self") this.selfCheck(keycode);
+    };
 
-        var that=this,info;
+    this.selfCheck=function(keycode){   //己方检查游戏是否结束并生成新方块
+        var that=this,info, i,j;
         setTimeout(function () {
             var numOfBlock = 0;
             for (i = 0; i < 4; i++) {
@@ -303,23 +306,32 @@ function GAME(type){
             }
             else {
                 that.isMove=0;
-                if(that.control=="self") {  //若为己方，才将行动码发至对方
-                    that.moveNum--;
-                    that.rand();
-                    info = {
-                        code: 2,
-                        user:that.ws.userName,
-                        roomId:that.ws.roomId,
-                        token:that.ws.token,
-                        actionCode: keycode,
-                        beginPos:that.beginPos
-                    };
-                    that.ws.send(JSON.stringify(info));
-                }
+                that.moveNum--;
+                that.rand();
+                info = {
+                    code: 2,
+                    user:that.ws.userName,
+                    roomId:that.ws.roomId,
+                    token:that.ws.token,
+                    actionCode: keycode,
+                    nwPos:that.beginPos[0]
+                };
+                that.ws.send(JSON.stringify(info));     //将新方块的位置发给对手
                 that.createBlock();
             }
         }, 250)
     };
+
+    this.comHandle=function(queue){      //对方2048处理指令队列
+        var order;
+        while(queue.length){
+            order=queue.shift();
+            this.beginPos.push(order.nwPos);
+            this.slide(order.actionCode);
+            this.createBlock();
+        }
+    };
+
     this.clearStage=function(){
         while(this.stage.hasChildNodes()){
             this.stage.removeChild(this.stage.firstChild);
