@@ -301,7 +301,6 @@ function GAME(type){
                     score:that.score
                 };
                 that.ws.send(JSON.stringify(info));
-                that.init();
             }
             else {
                 that.isMove=0;
