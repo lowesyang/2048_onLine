@@ -2,7 +2,9 @@
     padding:0px;
     margin:0px;
     font-family: "Microsoft YaHei","Microsoft YaHei UI Light",sans-serif;
-
+}
+a{
+    text-decoration: none;
 }
 .container{
     margin: 20px auto;
@@ -76,4 +78,15 @@
     color:cornflowerblue;
     float:right;
 
+}
+.footer{
+    position: absolute;
+    display: block;
+    width:300px;
+    text-align: center;
+    margin:auto;
+    bottom:10px;
+    left:0;
+    right:0;
+    font-size: 24px;
 }
