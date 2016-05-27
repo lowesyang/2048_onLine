@@ -118,6 +118,7 @@
     }
 
     function pageStateInit(){
+        readyBtn.isClick=1;
         readyBtn.innerHTML="准备";
         comState.innerHTML="未准备";
         readyBtn.style.backgroundColor="#24a7f0";
