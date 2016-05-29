@@ -22,6 +22,7 @@ function GAME(type){
         this.isMove=0;          //记录是否有移动
         this.moveNum=0;         //记录同时移动的操作数量，当有滑块仍在移动时禁止操作
         this.beginPos=[];       //方块记录队列，用于记录未渲染但已生成的方块
+		var that=this;
         if(this.control=="self"){
             this.rand();
             this.rand();
@@ -40,7 +41,6 @@ function GAME(type){
                 that.isKeyDown = 0;
             };
         }
-        var that=this;
         setInterval(function(){
             that.scoreBox.innerHTML=that.score;
         },10)
